@@ -1,4 +1,6 @@
 const mysql = require('mysql');
+// Need to get from .env
+
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',

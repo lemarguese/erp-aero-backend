@@ -11,6 +11,7 @@ authRouter.post('/login', (req, res) => {
         sql.query(`SELECT * from users WHERE username = '${username}' AND password = '${password}';`,
             (err, rows) => {
                 if (err) throw err
+                // TODO Select prev data from tokens
                 if (rows[0]) res.send(generate())
             })
         return
@@ -33,13 +34,17 @@ authRouter.post('/signup', (req, res) => {
     const {id, password} = req.body;
 
     sql.query(`INSERT INTO users VALUES ('${id}', '${password}');`, (err, rows) => {
-        if (err) throw err;
+        if (err) return res.send(500);
+        // Insert into tokens new generated token
+
         res.send(generate())
     })
 })
 
 authRouter.get('/logout', (req, res) => {
     const tokens = generate();
+
+    // Return updated token by replacing prev token of logged out user
     sql.query(`UPDATE tokens SET VALUES ('${tokens.accessToken}', '${tokens.refreshToken}');`, (err, rows) => {
         if (err) throw err;
         res.send(tokens)
